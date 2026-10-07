@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cargo
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cargo.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: cargo, port: { number: 80 } }

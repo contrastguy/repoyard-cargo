@@ -1,0 +1,33 @@
+{
+  "name": "repoyard-cargo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API de exemplo que passa pela esteira do repoyard (build, testes, qualidade, imagem, deploy).",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "dev": "node --watch --import tsx src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "test": "vitest run --coverage",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@sentry/node": "^11.5.0",
+    "dd-trace": "^6.20.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.4",
+    "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
+  }
+}

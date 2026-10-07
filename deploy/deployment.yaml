@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cargo
+  labels: { app: cargo }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: cargo }
+  template:
+    metadata:
+      labels:
+        app: cargo
+        tags.datadoghq.com/service: cargo
+        tags.datadoghq.com/env: kind
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: cargo
+          image: cargo
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef: { name: cargo-version }
+          env:
+            - name: DD_ENV
+              value: kind
+            - name: DD_SERVICE
+              value: cargo
+            - name: DD_AGENT_HOST
+              valueFrom: { fieldRef: { fieldPath: status.hostIP } }
+            - name: SENTRY_DSN
+              valueFrom: { secretKeyRef: { name: cargo-sentry, key: dsn, optional: true } }
+          resources:
+            requests: { cpu: 50m, memory: 96Mi }
+            limits: { memory: 256Mi }
+          # Probe HTTP de verdade no /health (não um "ls" que passa com a JVM/processo morto).
+          readinessProbe:
+            httpGet: { path: /health, port: 8080 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
