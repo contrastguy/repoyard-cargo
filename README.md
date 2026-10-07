@@ -7,7 +7,7 @@ API de exemplo que passa pela esteira do [repoyard](../repoyard): CI (lint/test/
 | Rota | O que faz |
 |---|---|
 | `GET /health` | status + versão (SHA) em execução |
-| `GET/POST /items`, `GET/DELETE /items/:id` | CRUD em memória |
+| `GET/POST /items`, `GET/DELETE /items/:id` | CRUD em memória (nome com 1 a 200 caracteres) |
 | `GET /boom` | lança erro (demonstração para o Sentry) |
 | `GET /slow?ms=` | atrasa a resposta, máx. 5 s (demonstração para o Datadog) |
 
