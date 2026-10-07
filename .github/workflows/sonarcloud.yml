@@ -1,5 +1,7 @@
 # Quality gate do SonarCloud (gratuito para repo público). Precisa do secret SONAR_TOKEN.
 # PRs de fork não recebem secrets: o job é pulado neles.
+# Só roda com a variável SONAR_ENABLED=true (gh variable set SONAR_ENABLED --body true), depois do SONAR_TOKEN.
+# Sem isso o job fica "skipped" em vez de vermelho, e o repoyard não confunde falta de configuração com código quebrado.
 name: sonarcloud
 
 on:
@@ -14,7 +16,7 @@ permissions:
 jobs:
   sonarcloud:
     name: SonarCloud
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    if: vars.SONAR_ENABLED == 'true' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
