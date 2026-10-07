@@ -9,7 +9,7 @@ resources:
 images:
   - name: cargo
     newName: ghcr.io/contrastguy/repoyard-cargo
-    newTag: sha-ac6104f
+    newTag: sha-30ffc4b
 configMapGenerator:
   - name: cargo-version
     literals:
