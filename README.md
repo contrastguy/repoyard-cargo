@@ -31,3 +31,7 @@ O repositório precisa ser **público** (CodeQL e branch protection grátis só 
 5. Packages: deixe a imagem `repoyard-cargo` **pública** (o kind puxa sem pull secret)
 
 Os agentes do repoyard só agem em PRs de `contrastguy`, `repoyard-bot` e `dependabot[bot]` com head no próprio repo (allowlist da spec §6).
+
+## Pátio ao vivo
+
+Cada push nesta API aparece como um caminhão no [repoyard](../repoyard): CI → SonarCloud/CodeQL → imagem → Argo CD → pods no kind.
