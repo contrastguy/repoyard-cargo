@@ -36,7 +36,7 @@ export function createApp(opts: AppOptions = {}) {
   })
 
   app.post('/items', (req, res) => {
-    const name = typeof req.body?.name === 'string' ? req.body.name : ''
+    const name = typeof req.body?.name === 'string' ? req.body.name.trim() : ''
     if (!name || name.length > MAX_NAME) return void res.status(400).json({ error: `name must be 1-${MAX_NAME} chars` })
     const item = { id: nextId++, name }
     items.set(item.id, item)
