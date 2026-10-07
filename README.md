@@ -37,3 +37,5 @@ Os agentes do repoyard só agem em PRs de `contrastguy`, `repoyard-bot` e `depen
 Cada push nesta API aparece como um caminhão no [repoyard](../repoyard): CI → SonarCloud/CodeQL → imagem → Argo CD → pods no kind.
 
 Demonstrações para a Torre: `GET /boom` gera um erro no Sentry; `GET /slow?ms=` gera latência.
+
+O Vigia do pátio observa a saúde até 30 min depois de cada deploy: com 3 ou mais issues novas no Sentry, ele abre uma issue com o diagnóstico e um PR de rollback da imagem.
