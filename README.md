@@ -35,3 +35,5 @@ Os agentes do repoyard só agem em PRs de `contrastguy`, `repoyard-bot` e `depen
 ## Pátio ao vivo
 
 Cada push nesta API aparece como um caminhão no [repoyard](../repoyard): CI → SonarCloud/CodeQL → imagem → Argo CD → pods no kind.
+
+Demonstrações para a Torre: `GET /boom` gera um erro no Sentry; `GET /slow?ms=` gera latência.
