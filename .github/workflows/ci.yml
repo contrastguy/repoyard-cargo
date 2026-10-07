@@ -34,7 +34,7 @@ jobs:
         with: { node-version: 24, cache: npm }
       - run: npm ci
       - run: npm test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with: { name: coverage, path: coverage/lcov.info, retention-days: 3 }
 
   build:
