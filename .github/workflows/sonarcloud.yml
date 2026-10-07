@@ -23,6 +23,6 @@ jobs:
         with: { node-version: 24, cache: npm }
       - run: npm ci
       - run: npm test
-      - uses: SonarSource/sonarqube-scan-action@v5
+      - uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
