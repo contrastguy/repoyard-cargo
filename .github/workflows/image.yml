@@ -1,5 +1,5 @@
 # Na main: publica ghcr.io/<owner>/repoyard-cargo:sha-<curto> e atualiza deploy/ (o Argo CD sincroniza).
-# O commit de bump leva [skip ci]; o repoyard ignora esses commits na esteira.
+# O commit de bump leva [skip ci] (nenhum workflow roda nele) e é feito pela deploy key DEPLOY_KEY.
 name: image
 
 on:
@@ -8,7 +8,7 @@ on:
     paths-ignore: ['deploy/**']
 
 permissions:
-  contents: write
+  contents: read
   packages: write
 
 concurrency:
@@ -19,7 +19,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      # Checkout pela deploy key: é a única identidade com bypass no ruleset da main (para o commit de bump).
       - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
       - id: tag
         run: echo "short=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
