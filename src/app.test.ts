@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { describe, expect, it } from 'vitest'
-import { createApp } from './app.js'
+import express from 'express'
+import { createApp, errorHandler } from './app.js'
 
 describe('cargo api', () => {
   it('reports health with the running version', async () => {
@@ -32,9 +33,32 @@ describe('cargo api', () => {
     const app = createApp({ onError: (err) => reported.push(err) })
     const post = () => request(app).post('/items').set('Content-Type', 'application/json')
     expect((await post().send('{"name":')).status).toBe(400)
+    // Acima do limit de 16kb do express.json no app.
     expect((await post().send(JSON.stringify({ name: 'x'.repeat(20_000) }))).status).toBe(413)
     expect((await post().set('Content-Type', 'application/json; charset=latin1').send('{"name":"x"}')).status).toBe(415)
     expect(reported).toEqual([])
+  })
+
+  it('hides the message of a 4xx error not marked as exposable', async () => {
+    const app = express()
+    app.get('/test-hidden', () => {
+      throw Object.assign(new Error('detalhe interno'), { statusCode: 409, expose: false })
+    })
+    app.use(errorHandler())
+    const res = await request(app).get('/test-hidden')
+    expect(res.status).toBe(409)
+    expect(res.body).toEqual({ error: 'bad request' })
+  })
+
+  it('still reports 5xx errors that carry a status', async () => {
+    const reported: unknown[] = []
+    const app = express()
+    app.get('/test-503', () => {
+      throw Object.assign(new Error('upstream'), { status: 503 })
+    })
+    app.use(errorHandler((err) => reported.push(err)))
+    expect((await request(app).get('/test-503')).status).toBe(500)
+    expect(reported).toHaveLength(1)
   })
 
   it('throws on /boom so error tracking has something to catch', async () => {

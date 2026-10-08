@@ -59,15 +59,24 @@ export function createApp(opts: AppOptions = {}) {
     res.json({ waitedMs: ms })
   })
 
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-    // Erro do cliente (JSON malformado, corpo grande, charset): responde o 4xx e não vai para o Sentry.
-    const status = (err as { status?: unknown })?.status
-    if (typeof status === 'number' && status >= 400 && status < 500) {
-      return void res.status(status).json({ error: err instanceof Error ? err.message : 'bad request' })
-    }
-    opts.onError?.(err)
-    res.status(500).json({ error: 'internal error' })
-  })
+  app.use(errorHandler(opts.onError))
 
   return app
+}
+
+type HttpError = { status?: unknown; statusCode?: unknown; expose?: unknown; message?: unknown }
+
+/** Erro do cliente (JSON malformado, corpo grande, charset): responde o 4xx e não vai para o Sentry. */
+export function errorHandler(onError?: (err: unknown) => void) {
+  return (err: unknown, _req: Request, res: Response, next: NextFunction) => {
+    if (res.headersSent) return next(err)
+    const e = (err ?? {}) as HttpError
+    const status = typeof e.status === 'number' ? e.status : e.statusCode
+    if (typeof status === 'number' && status >= 400 && status < 500) {
+      // Só mensagens marcadas como públicas (http-errors/body-parser) chegam ao cliente.
+      return void res.status(status).json({ error: e.expose === true && typeof e.message === 'string' ? e.message : 'bad request' })
+    }
+    onError?.(err)
+    res.status(500).json({ error: 'internal error' })
+  }
 }
