@@ -27,6 +27,16 @@ describe('cargo api', () => {
     expect((await request(app).post('/items').send({})).status).toBe(400)
   })
 
+  it('answers malformed requests with their 4xx status and does not report them as errors', async () => {
+    const reported: unknown[] = []
+    const app = createApp({ onError: (err) => reported.push(err) })
+    const post = () => request(app).post('/items').set('Content-Type', 'application/json')
+    expect((await post().send('{"name":')).status).toBe(400)
+    expect((await post().send(JSON.stringify({ name: 'x'.repeat(20_000) }))).status).toBe(413)
+    expect((await post().set('Content-Type', 'application/json; charset=latin1').send('{"name":"x"}')).status).toBe(415)
+    expect(reported).toEqual([])
+  })
+
   it('throws on /boom so error tracking has something to catch', async () => {
     const res = await request(createApp()).get('/boom')
     expect(res.status).toBe(500)

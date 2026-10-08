@@ -60,6 +60,11 @@ export function createApp(opts: AppOptions = {}) {
   })
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    // Erro do cliente (JSON malformado, corpo grande, charset): responde o 4xx e não vai para o Sentry.
+    const status = (err as { status?: unknown })?.status
+    if (typeof status === 'number' && status >= 400 && status < 500) {
+      return void res.status(status).json({ error: err instanceof Error ? err.message : 'bad request' })
+    }
     opts.onError?.(err)
     res.status(500).json({ error: 'internal error' })
   })
