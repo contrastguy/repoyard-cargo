@@ -11,6 +11,8 @@ API de exemplo que passa pela esteira do [repoyard](../repoyard): CI (lint/test/
 | `GET /boom` | lança erro (demonstração para o Sentry) |
 | `GET /slow?ms=` | atrasa a resposta, máx. 5 s (demonstração para o Datadog) |
 
+Requisições malformadas (JSON inválido, corpo acima de 16 kb, charset ou encoding não suportado) respondem 400, 413 ou 415 e não vão para o Sentry; só erros 5xx são reportados.
+
 ## Desenvolvimento
 
 ```bash
