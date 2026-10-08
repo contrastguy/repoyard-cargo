@@ -9,8 +9,8 @@ resources:
 images:
   - name: cargo
     newName: ghcr.io/contrastguy/repoyard-cargo
-    newTag: sha-15e0d21
+    newTag: sha-30ffc4b
 configMapGenerator:
   - name: cargo-version
     literals:
-      - GIT_SHA=15e0d213fce810e19c00b1f5001adfea8aa9bfcd
+      - GIT_SHA=ac6104f43231739e4a5d819a646b1374e9d4d6c9

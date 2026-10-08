@@ -7,7 +7,7 @@ API de exemplo que passa pela esteira do [repoyard](../repoyard): CI (lint/test/
 | Rota | O que faz |
 |---|---|
 | `GET /health` | status + versão (SHA) em execução |
-| `GET/POST /items`, `GET/DELETE /items/:id` | CRUD em memória |
+| `GET/POST /items`, `GET/DELETE /items/:id` | CRUD em memória (nome com 1 a 200 caracteres) |
 | `GET /boom` | lança erro (demonstração para o Sentry) |
 | `GET /slow?ms=` | atrasa a resposta, máx. 5 s (demonstração para o Datadog) |
 
@@ -41,3 +41,5 @@ Demonstrações para a Torre: `GET /boom` gera um erro no Sentry; `GET /slow?ms=
 ## Agentes do pátio
 
 PRs deste repositório passam pelos agentes do repoyard: o Porteiro classifica e resume, o Inspetor revisa o diff depois do CI verde.
+
+O Vigia do pátio observa a saúde até 30 min depois de cada deploy: com 3 ou mais issues novas no Sentry, ele abre uma issue com o diagnóstico e um PR de rollback da imagem.
